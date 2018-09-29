@@ -26,7 +26,8 @@ export class AppComponent {
   public gameStarted = false;
   public newBestScore = false;
   public best_score = this.bestScoreService.retrieve();
-
+public childAge = 0;
+public IschildAgeSet = false;
   private snake = {
     direction: CONTROLS.LEFT,
     parts: [
@@ -75,11 +76,34 @@ export class AppComponent {
     return COLORS.BOARD;
   };
   
-  btn_showGameBoard():void{
+   btn_setChildAge(ageRange):void{
+	   alert('age is: '+ageRange);
+		this.IschildAgeSet = true;
+		this.childAge = ageRange;
+		this.showGme=false;		
+	   console.log('hey :'+ !this.showGme);
+	   
+	   this.btn_showGameBoard();
+	 //  this.setBoard();
+	  //   this.router.navigate(['./home']);
+  }
+  
+  btn_showGameBoard(){
+	 
 	  if(this.showGme)
-		 this.showGme=false;
+		 this.showGme=true;
 	  else
 		  this.showGme=true;
+	   console.log('hey :'+ !this.showGme);
+	 //  this.setBoard();
+	  //   this.router.navigate(['./home']);
+  }
+  
+   btn_clearGameBoard(){
+	  alert('hi');
+	  this.IschildAgeSet = false;
+		this.childAge = 0;
+		this.showGme=false;		
 	   console.log('hey :'+ !this.showGme);
 	 //  this.setBoard();
 	  //   this.router.navigate(['./home']);
