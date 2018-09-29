@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { BestScoreManager } from './app.storage.service';
 import { CONTROLS, COLORS, BOARD_SIZE, GAME_MODES } from './app.constants';
-import { IfObservable } from '../../node_modules/rxjs/observable/IfObservable';
-import { truncate } from 'fs';
 
 
 @Component({
@@ -15,27 +13,22 @@ import { truncate } from 'fs';
 })
 export class AppComponent {
   private interval: number;
-  private wormDirection: number;
-  private default_mode = 'Level_1';
+  private tempDirection: number;
+  private default_mode = 'classic';
   private isGameOver = false;
-  public text='Hello, My name is NibiNibi!';
   public showGme = true;
   public all_modes = GAME_MODES;
   public getKeys = Object.keys;
   public board = [];
   public obstacles = [];
   public score = 0;
-  public showMenuChecker = true;
+  public showMenuChecker = false;
   public gameStarted = false;
   public newBestScore = false;
   public best_score = this.bestScoreService.retrieve();
 public childAge = 0;
 public IschildAgeSet = false;
-public IsMoving = false;
-public obKeyPressed = "";
-public obCodeBehind = "";
-isLevel1 = false;
-  private worm = {
+  private snake = {
     direction: CONTROLS.LEFT,
     parts: [
       {
@@ -53,43 +46,30 @@ isLevel1 = false;
   constructor(private bestScoreService: BestScoreManager){
 	  console.log(this.showGme);
     this.setBoard();
-	this.playAudio('https://github.com/vaibhavkeshav/hackdays/raw/master/begin.m4a');
-	if(this.default_mode == 'Level_1')
-		this.isLevel1 = true;
-	else
-		this.isLevel1 = false;
   }
 
   handleKeyboardEvents(e: KeyboardEvent) {
-    if (e.keyCode === CONTROLS.LEFT && this.worm.direction !== CONTROLS.RIGHT) {
-      this.wormDirection = CONTROLS.LEFT;
-    } else if (e.keyCode === CONTROLS.UP && this.worm.direction !== CONTROLS.DOWN) {
-      this.wormDirection = CONTROLS.UP;
-    } else if (e.keyCode === CONTROLS.RIGHT && this.worm.direction !== CONTROLS.LEFT) {
-      this.wormDirection = CONTROLS.RIGHT;
-    } else if (e.keyCode === CONTROLS.DOWN && this.worm.direction !== CONTROLS.UP) {
-      this.wormDirection = CONTROLS.DOWN;
+    if (e.keyCode === CONTROLS.LEFT && this.snake.direction !== CONTROLS.RIGHT) {
+      this.tempDirection = CONTROLS.LEFT;
+    } else if (e.keyCode === CONTROLS.UP && this.snake.direction !== CONTROLS.DOWN) {
+      this.tempDirection = CONTROLS.UP;
+    } else if (e.keyCode === CONTROLS.RIGHT && this.snake.direction !== CONTROLS.LEFT) {
+      this.tempDirection = CONTROLS.RIGHT;
+    } else if (e.keyCode === CONTROLS.DOWN && this.snake.direction !== CONTROLS.UP) {
+      this.tempDirection = CONTROLS.DOWN;
     }
   }
-  
-  playAudio(cs:string){
-	
-    const newLocal = cs;
-    let audio = new Audio(newLocal);
-	
-    audio.load();
-    audio.play();
-  }
+
   setColors(col: number, row: number): string {
     if (this.isGameOver) {
       return COLORS.GAME_OVER;
     } else if (this.fruit.x === row && this.fruit.y === col) {
       return COLORS.FRUIT;
-    } else if (this.worm.parts[0].x === row && this.worm.parts[0].y === col) {
+    } else if (this.snake.parts[0].x === row && this.snake.parts[0].y === col) {
       return COLORS.HEAD;
     } else if (this.board[col][row] === true) {
       return COLORS.BODY;
-    } else if (this.default_mode === 'Level_3' && this.checkObstacles(row, col)) {
+    } else if (this.default_mode === 'obstacles' && this.checkObstacles(row, col)) {
       return COLORS.OBSTACLE;
     }
 
@@ -97,19 +77,13 @@ isLevel1 = false;
   };
   
    btn_setChildAge(ageRange):void{
-     if (ageRange==='10'){
-       this.IsMoving=true;
-     }else{
-      this.IsMoving=false;
-     }
-	   //alert('age is: '+ageRange);
+	   alert('age is: '+ageRange);
 		this.IschildAgeSet = true;
 		this.childAge = ageRange;
 		this.showGme=false;		
 	   console.log('hey :'+ !this.showGme);
 	   
-     this.btn_showGameBoard();
-     this.playAudio('https://github.com/vaibhavkeshav/hackdays/raw/master/Level.m4a');
+	   this.btn_showGameBoard();
 	 //  this.setBoard();
 	  //   this.router.navigate(['./home']);
   }
@@ -126,60 +100,43 @@ isLevel1 = false;
   }
   
    btn_clearGameBoard(){
-	 // alert('hi');
+	  alert('hi');
 	  this.IschildAgeSet = false;
-	  this.childAge = 0;
-	  this.showGme=false;		
-	  console.log('hey :'+ !this.showGme);
-	  this.playAudio('https://github.com/hwolkowski/DualityNet/raw/master/Age%20Group.m4a');
-	 
+		this.childAge = 0;
+		this.showGme=false;		
+	   console.log('hey :'+ !this.showGme);
+	 //  this.setBoard();
+	  //   this.router.navigate(['./home']);
   }
 
   updatePositions(): void {
-    let New_position = this.repositionHead();
+    let newHead = this.repositionHead();
     let me = this;
-    if (this.IsMoving){
-      let dir = this.randomNumber()%4;
-      let tx = this.fruit.x;
-      let ty = this.fruit.y;
-      if (dir===0){
-        this.fruit.x++;
-      }else if (dir===1){
-        this.fruit.x--;
-      }else if (dir===2){
-        this.fruit.y++;
-      }else if (dir===3){
-        this.fruit.y--;
-      }
-      if ((this.obstacleCollision(this.fruit))||(this.boardCollision(this.fruit))||(this.selfCollision(this.fruit))){
-        this.fruit.x=tx;
-        this.fruit.y=ty;
-      }
-    }
-    if (this.default_mode === 'Level_1' && this.boardCollision(New_position)) {
+
+    if (this.default_mode === 'classic' && this.boardCollision(newHead)) {
       return this.gameOver();
-    } else if (this.default_mode === 'Level_2') {
-      this.noWallsTransition(New_position);
-    } else if (this.default_mode === 'Level_3') {
-      this.noWallsTransition(New_position);
-      if (this.obstacleCollision(New_position)) {
+    } else if (this.default_mode === 'no_walls') {
+      this.noWallsTransition(newHead);
+    } else if (this.default_mode === 'obstacles') {
+      this.noWallsTransition(newHead);
+      if (this.obstacleCollision(newHead)) {
         return this.gameOver();
       }
     }
 
-    if (this.selfCollision(New_position)) {
+    if (this.selfCollision(newHead)) {
       return this.gameOver();
-    } else if (this.fruitCollision(New_position)) {
+    } else if (this.fruitCollision(newHead)) {
       this.eatFruit();
     }
 
-    let oldTail = this.worm.parts.pop();
+    let oldTail = this.snake.parts.pop();
     this.board[oldTail.y][oldTail.x] = false;
 
-    this.worm.parts.unshift(New_position);
-    this.board[New_position.y][New_position.x] = true;
+    this.snake.parts.unshift(newHead);
+    this.board[newHead.y][newHead.x] = true;
 
-    this.worm.direction = this.wormDirection;
+    this.snake.direction = this.tempDirection;
 
     setTimeout(() => {
       me.updatePositions();
@@ -187,27 +144,19 @@ isLevel1 = false;
   }
 
   repositionHead(): any {
-    let New_position = Object.assign({}, this.worm.parts[0]);
+    let newHead = Object.assign({}, this.snake.parts[0]);
 
-    if (this.wormDirection === CONTROLS.LEFT) {
-	this.obKeyPressed = "LEFT key pressed";
-	this.obCodeBehind = "New_position.x -= 1;";
-      New_position.x -= 1;
-    } else if (this.wormDirection === CONTROLS.RIGHT) {
-	  this.obKeyPressed = "RIGHT key pressed";
-	  this.obCodeBehind = "New_position.x += 1;";
-      New_position.x += 1;
-    } else if (this.wormDirection === CONTROLS.UP) {
-	  this.obKeyPressed = "UP key pressed";
-	  this.obCodeBehind = "New_position.y -= 1;";
-      New_position.y -= 1;
-    } else if (this.wormDirection === CONTROLS.DOWN) {
-	 this.obKeyPressed = "DOWN key pressed";
-	 this.obCodeBehind = "New_position.y += 1; ";
-      New_position.y += 1;
+    if (this.tempDirection === CONTROLS.LEFT) {
+      newHead.x -= 1;
+    } else if (this.tempDirection === CONTROLS.RIGHT) {
+      newHead.x += 1;
+    } else if (this.tempDirection === CONTROLS.UP) {
+      newHead.y -= 1;
+    } else if (this.tempDirection === CONTROLS.DOWN) {
+      newHead.y += 1;
     }
 
-    return New_position;
+    return newHead;
   }
 
   noWallsTransition(part: any): void {
@@ -283,9 +232,9 @@ isLevel1 = false;
   eatFruit(): void {
     this.score++;
 
-    let tail = Object.assign({}, this.worm.parts[this.worm.parts.length - 1]);
+    let tail = Object.assign({}, this.snake.parts[this.snake.parts.length - 1]);
 
-    this.worm.parts.push(tail);
+    this.snake.parts.push(tail);
     this.resetFruit();
 
     if (this.score % 5 === 0) {
@@ -297,7 +246,7 @@ isLevel1 = false;
     this.isGameOver = true;
     this.gameStarted = false;
     let me = this;
-	this.text="Game Over. Better luck next time.";
+
     if (this.score > this.best_score) {
       this.bestScoreService.store(this.score);
       this.best_score = this.score;
@@ -327,32 +276,28 @@ isLevel1 = false;
   }
 
   showMenu(): void {
-	this.text="Catch as many hamsters you can!";
     this.showMenuChecker = !this.showMenuChecker;
-	 this.playAudio('https://github.com/vaibhavkeshav/hackdays/raw/master/Level.m4a');
-	 this.isGameOver = true;
   }
 
   newGame(mode: string): void {
-    this.default_mode = mode || 'Level_1';
+    this.default_mode = mode || 'classic';
     this.showMenuChecker = false;
     this.newBestScore = false;
     this.gameStarted = true;
     this.score = 0;
-	this.text="Catch as many hamsters you can!";
-    this.wormDirection = CONTROLS.LEFT;
+    this.tempDirection = CONTROLS.LEFT;
     this.isGameOver = false;
     this.interval = 150;
-    this.worm = {
+    this.snake = {
       direction: CONTROLS.LEFT,
       parts: []
     };
 
     for (let i = 0; i < 3; i++) {
-      this.worm.parts.push({ x: 8 + i, y: 8 });
+      this.snake.parts.push({ x: 8 + i, y: 8 });
     }
 
-    if (mode === 'Level_3') {
+    if (mode === 'obstacles') {
       this.obstacles = [];
       let j = 1;
       do {

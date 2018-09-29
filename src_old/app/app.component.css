@@ -4,7 +4,7 @@
   position: relative;
 }
 
-body{
+.body{
 	background-image: url("https://github.com/vaibhavkeshav/hackdays/raw/master/back.png");
     background-repeat: no-repeat, repeat;
     background-color: #cccccc;
@@ -27,15 +27,6 @@ body{
   font-size: 12px;
 }
 
-.code-display {
-  position: absolute; top:400px; right: 20px; font-size:25px; border-radius:10px;     border-style: solid;
-    border-color: red green  blue yellow ; background: #f0f0f5; padding: 20px; width: 400px;height: 100px;
-}
-
-.code-display2 {
-   position: absolute;top:200px; right: 20px; font-size:25px; border-radius:10px;     border-style: solid;
-    border-color: red green  blue yellow ; background: #f0f0f5; padding: 20px; width: 400px;height: 100px;
-}
 
 .div1 {
     width: 150px;
@@ -61,13 +52,13 @@ body{
 
 .para {
     width: 300px;
-    height: 100px;
+    height: 0;
     display:hide;
     position: relative;
-	left:200px; top:100px;
+	left:100px; top:0px;
     -webkit-animation-name: msgshow; /* Safari 4.0 - 8.0 */
     -webkit-animation-duration: 4s; /* Safari 4.0 - 8.0 */
-    animation-name: msgbub;
+    animation-name: msgshow;
     animation-duration: 4s;
 }
 
@@ -94,12 +85,12 @@ body{
 
 /* Standard syntax */
 @keyframes msgshow {
-    0%  {display:hide; left:200px; top:0px;}
-	25%  { display:hide;left:200px; top:0px;}
-    50%  { display:hide;left:200px; top:0px;}
-    75%  { display:hide;left:200px; top:0px;}
-    100% { display:block;left:200px; top:0px;}
-    100% { display:block;left:200px; top:0px;}
+    0%  {display:hide; left:100px; top:0px;}
+	25%  { display:hide;left:100px; top:0px;}
+    50%  { display:hide;left:100px; top:0px;}
+    75%  { display:hide;left:100px; top:0px;}
+    100% { display:block;left:100px; top:0px;}
+    100% { display:block;left:100px; top:0px;}
 }
 
 
@@ -114,7 +105,7 @@ body{
   position: relative;
   display: block;
   margin: auto;
-  background-color: rgb(255, 0, 0);
+  background-color: #47565A;
   box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
   border-radius: 5px;
 }
@@ -130,20 +121,20 @@ body{
   display: inline-block;
 }
 
-.restart-button {
+.start-button {
   padding: 15px;
   text-align: center;
-  background-color: rgb(255, 0, 0);
+  background-color: #47565A;
   color: white;
   border-radius: 5px;
 }
 
-.restart-button:hover {
+.start-button:hover {
   opacity: 0.65;
   cursor: pointer;
 }
 
-.restart-button.new-game-button {
+.start-button.new-game-button {
   margin: 0 105px 4px 105px;
 }
 
@@ -165,7 +156,7 @@ body{
   font-size: 1.17em;
   margin-bottom: 13px;
   display: block;
-  color: rgb(0, 0, 0);
+  color: #fff;
 }
 
 .new-best-score {
@@ -214,7 +205,7 @@ body{
   img:hover {
     box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
 }
-  .restart-button.new-game-button {
+  .start-button.new-game-button {
     margin: 0 15% 1% 15%;
   }
   @-moz-document url-prefix() {
@@ -222,17 +213,4 @@ body{
       min-height: 5.5vw;
     }
   }
-}
-
-.container {
-  position: relative;
-  text-align: center;
-  color: white;
-}
-
-.InsideContainer {
-  color: #fff;
-  position: absolute;
-  top: 78px;
-  left: 400px;
 }

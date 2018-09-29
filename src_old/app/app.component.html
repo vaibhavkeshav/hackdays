@@ -1,0 +1,44 @@
+<img style="position: absolute; top: 0; right: 0; border: 0;" width="120px" height="90px" src="https://github.com/vaibhavkeshav/hackdays/raw/master/home.png"(click)="btn_clearGameBoard()" >
+ <img class="div1" style="display:input;left:200px; top:100px;" src="https://github.com/vaibhavkeshav/hackdays/raw/master/hampster.png">  
+ <img class="div2" style="display:input;left:200px; top:0px;;" src="https://github.com/vaibhavkeshav/hackdays/raw/master/chatbubble.png" text="hello">
+ <a class="para2">jane saath kya jaega</a>
+<div *ngIf="IschildAgeSet; else AskChildAge;">
+
+<div *ngIf="showGme; else Elsetemplate;">
+
+<div class="game-container">
+	  <div class="game-header">
+		<h3 class="logo">KID-KOD</h3>
+		<div class="score-block">
+		  <h3 class="score" [ngClass]="{'new-best-score': newBestScore}">Score: {{score}}</h3>
+		  <h3 class="best-score" [ngClass]="{'new-best-score': newBestScore}">Best Score: {{best_score}}</h3>
+		</div>
+	  </div>
+	  <div class="row" *ngFor="let column of board; let i = index;">
+		<div class="column" [ngStyle]="{'background-color': setColors(i, j)}" *ngFor="let row of column; let j = index"></div>
+	  </div>
+	  <div class="start-button" [ngClass]="{'disable-clicks': gameStarted}" (click)="showMenu()">Start Game</div>
+	  <div class="new-game-menu" *ngIf="showMenuChecker">
+		<span class="new-game-menu-label">Select Mode</span>
+		<div class="start-button new-game-button" (click)="newGame(mode)" *ngFor="let mode of getKeys(all_modes)">{{all_modes[mode]}}</div>
+	  </div>
+	</div>
+	
+</div>
+
+<ng-template #Elsetemplate>
+	<div>trurtggg</div>
+</ng-template>
+
+</div>
+	
+ <ng-template #AskChildAge>
+	<div  (click)="btn_setChildAge('5')" style="cursor:pointer; position:fixed;top: 40%;left: 20%;"><table>
+	<tr><td><img  width="90px" height="100px" src="https://github.com/vaibhavkeshav/hackdays/raw/master/girl-6.png"></td><td><div style="font-size:25px; border-radius:25px; background: #73AD21; padding: 20px; width: 200px;height: 50px;">  5 to 9 years !</div><td><img width="90px" height="100px" src="https://github.com/vaibhavkeshav/hackdays/raw/master/boy-6.png"></td></tr></table></div>
+	
+	<div  (click)="btn_setChildAge('10')" style="cursor:pointer; position:fixed;top: 40%;left: 55%;"><table><tr><td><img  width="90px" height="100px" src="https://github.com/vaibhavkeshav/hackdays/raw/master/girl-12.png"></td><td><div style="font-size:20px; border-radius:25px; background: #73AD21; padding: 25px; width: 200px;height: 50px;">  10 to 15 years !</div><td><img width="90px" height="100px" src="https://github.com/vaibhavkeshav/hackdays/raw/master/boy-12.png"></td></tr>
+	
+	</table></div>
+</ng-template>
+
+
